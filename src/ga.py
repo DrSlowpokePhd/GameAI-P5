@@ -72,7 +72,9 @@ class Individual_Grid(object):
         right = width - 1
         for y in range(height):
             for x in range(left, right):
-                pass
+                r = random.randrange(10)
+                if r == 1:
+                    genome[y][x] = random.choice(options)
         return genome
 
     # Create zero or more children from self and other
@@ -82,11 +84,27 @@ class Individual_Grid(object):
         # do crossover with other
         left = 1
         right = width - 1
+         
+        # implement uniform crossover
         for y in range(height):
+            r = random.randrange(2)
             for x in range(left, right):
                 # STUDENT Which one should you take?  Self, or other?  Why?
                 # STUDENT consider putting more constraints on this to prevent pipes in the air, etc
-                pass
+                
+                if r == 1:
+                    new_genome[y][x] = self.genome[y][x]
+                else:
+                    new_genome[y][x] = other.genome[y][x]
+                
+                # prevent floating pipes
+                # currently causing index errors
+                '''if y <= height:
+                    print ("(" + str(x) + ", " + str(y) + ")")
+                    if new_genome[y][x] == "|" and (new_genome[y+1][x] != "|" or new_genome[y+1][x] != "X"):
+                        new_genome[y][x] = "-"
+                    if new_genome[y][x] == "T" and (new_genome[y+1][x] != "|" or new_genome[y+1][x] != "X"):
+                        new_genome[y][x] = "-" '''
         # do mutation; note we're returning a one-element tuple here
         return (Individual_Grid(new_genome),)
 
@@ -106,6 +124,8 @@ class Individual_Grid(object):
             g[col][-1] = "f"
         for col in range(14, 16):
             g[col][-1] = "X"
+        for x in range(5):
+            g[x][:] = "-" * width
         return cls(g)
 
     @classmethod
@@ -113,9 +133,12 @@ class Individual_Grid(object):
         # STUDENT consider putting more constraints on this to prevent pipes in the air, etc
         # STUDENT also consider weighting the different tile types so it's not uniformly random
         g = [random.choices(options, k=width) for row in range(height)]
-        g[15][:] = ["X"] * width
+        
         g[14][0] = "m"
+        # top of level all air blocks
+        # g[0][:] = "-" * width
         g[7][-1] = "v"
+        # g[12][:] = ["T"] * 4
         g[8:14][-1] = ["f"] * 6
         g[14:16][-1] = ["X", "X"]
         return cls(g)
@@ -345,6 +368,10 @@ Individual = Individual_Grid
 
 def generate_successors(population):
     results = []
+    for i in range(100):
+        level1, level2 = random.sample(population, 2)
+        new_level = level1.generate_children(level2)
+        results.append(new_level[0])
     # STUDENT Design and implement this
     # Hint: Call generate_children() on some individuals and fill up results.
     return results
@@ -389,7 +416,7 @@ def ga():
                             f.write("".join(row) + "\n")
                 generation += 1
                 # STUDENT Determine stopping condition
-                stop_condition = False
+                stop_condition = generation > 10
                 if stop_condition:
                     break
                 # STUDENT Also consider using FI-2POP as in the Sorenson & Pasquier paper
