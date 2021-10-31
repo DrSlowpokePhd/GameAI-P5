@@ -375,10 +375,12 @@ Individual = Individual_DE
 
 def generate_successors(population):
     results = []
-    for i in range(100):
-        level1, level2 = random.sample(population, 2)
-        new_level = level1.generate_children(level2)
-        results.append(new_level[0])
+    population.sort(key=lambda k : k.fitness()) 
+    top = population[:15]
+    for level1 in top:
+        for level2 in top:
+            new_level = level1.generate_children(level2)
+            results.append(new_level[0])
     # STUDENT Design and implement this
     # Hint: Call generate_children() on some individuals and fill up results.
     return results
