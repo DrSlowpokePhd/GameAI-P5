@@ -212,6 +212,9 @@ class Individual_DE(object):
             x = de[0]
             de_type = de[1]
             choice = random.random()
+
+            # genome = (x_pos, de_type, ...... y_pos? attr1? attr2? attr3? ))
+
             if de_type == "4_block":
                 y = de[2]
                 breakable = de[3]
@@ -297,7 +300,7 @@ class Individual_DE(object):
         a_part = self.genome[pa:] if len(self.genome) > 0 else []
         gb = b_part + a_part
         # do mutation
-        return Individual_DE(self.mutate(ga)), Individual_DE(self.mutate(gb))
+        return ( Individual_DE(self.mutate(ga)), Individual_DE(self.mutate(gb)) )
 
     # Apply the DEs to a base level.
     def to_level(self):
