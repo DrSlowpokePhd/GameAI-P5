@@ -375,8 +375,9 @@ Individual = Individual_DE
 
 def generate_successors(population):
     results = []
-    population.sort(key=lambda k : k.fitness()) 
-    top = population[:15]
+    population.sort(reverse=True, key=lambda k : k.fitness())
+    # print(population[0].fitness())
+    top = population[:10]
     for level1 in top:
         for level2 in top:
             new_level = level1.generate_children(level2)
@@ -425,7 +426,7 @@ def ga():
                             f.write("".join(row) + "\n")
                 generation += 1
                 # STUDENT Determine stopping condition
-                stop_condition = generation > 100
+                stop_condition = generation > 1000
                 if stop_condition:
                     break
                 # STUDENT Also consider using FI-2POP as in the Sorenson & Pasquier paper
